@@ -13,7 +13,7 @@ public class DeudaRestController {
     @GetMapping("api/deuda/{linea}")
     public List<Cuota> buscarDeuda(@PathParam(value = "linea") String numeroLinea) throws InterruptedException {
 
-        Thread.sleep(1000L);
+        Thread.sleep(15000L);
 
         return armarDeuda();
 
