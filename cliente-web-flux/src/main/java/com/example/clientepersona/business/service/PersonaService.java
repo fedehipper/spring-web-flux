@@ -10,7 +10,6 @@ import com.example.clientepersona.vo.DetallePersonaVo;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @Service
 public class PersonaService {
@@ -28,26 +27,29 @@ public class PersonaService {
         this.personaRepository = personaRepository;
     }
 
-    public Mono buscar(String numeroLinea, String numeroTarjeta, String dni) {
+    public Mono<DetallePersonaVo> buscar(String numeroLinea, String numeroTarjeta, String dni) {
 
-        Mono<Tarjeta> tarjeta = tarjetaRepository.buscarTarjeta(numeroTarjeta);
-        Mono<Persona> persona = personaRepository.buscarPersona(dni);
-        Mono<List<Cuota>> deuda = deudaRepository.buscarDeuda(numeroLinea).collectList();
+        Mono<Tarjeta> tarjeta = tarjetaRepository
+                .buscarTarjeta(numeroTarjeta)
+                .log("Tarjeta request");
+        Mono<Persona> persona = personaRepository
+                .buscarPersona(dni)
+                .log("Persona request");
+        Mono<List<Cuota>> deuda = deudaRepository
+                .buscarDeuda(numeroLinea)
+                .log("Deuda request")
+                .collectList()
+                .log("Armado lista");
         
-        return Mono.zip(Mono.zip(tarjeta, persona, this::armerDetallePersona), deuda, this::armarDetalleConDeuda);
-
-    }
-
-    public DetallePersonaVo armerDetallePersona(Tarjeta tarjeta, Persona persona) {
-        DetallePersonaVo detallePersonaVo = new DetallePersonaVo();
-        detallePersonaVo.setPersona(persona);
-        detallePersonaVo.setTarjeta(tarjeta);
-        return detallePersonaVo;
-    }
-
-    public DetallePersonaVo armarDetalleConDeuda(DetallePersonaVo detallePersonaVo, List<Cuota> deuda) {
-        detallePersonaVo.setDeuda(deuda);
-        return detallePersonaVo;
+        return Mono.zip(Mono.zip(tarjeta, persona, (unaTarjeta, unaPersona) -> {
+            DetallePersonaVo detallePersonaVo = new DetallePersonaVo();
+            detallePersonaVo.setPersona(unaPersona);
+            detallePersonaVo.setTarjeta(unaTarjeta);
+            return detallePersonaVo;
+        }), deuda, (detalle, unaDeuda) -> {
+            detalle.setDeuda(unaDeuda);
+            return detalle;
+        });
     }
 
 }

@@ -17,7 +17,7 @@ public class PersonaRestController {
     }
 
     @GetMapping("/api/detalle-persona")
-    public Mono<DetallePersonaVo> PersonaRestController(
+    public  Mono<DetallePersonaVo> PersonaRestController(
             @RequestParam String numeroLinea, 
             @RequestParam String numeroTarjeta, 
             @RequestParam String dni) {

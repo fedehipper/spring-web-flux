@@ -4,7 +4,6 @@ public class Persona {
 
     private String nombre;
     private String apellido;
-    private String cuil;
     private String edad;
 
     public String getNombre() {
@@ -21,14 +20,6 @@ public class Persona {
 
     public void setApellido(String apellido) {
         this.apellido = apellido;
-    }
-
-    public String getCuil() {
-        return cuil;
-    }
-
-    public void setCuil(String cuil) {
-        this.cuil = cuil;
     }
 
     public String getEdad() {
