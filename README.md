@@ -3,7 +3,7 @@ Spring Web Flux
 
 Como combinar diferentes responses en un solo DTO con Rest Template y Web Client.
 
-En el proyecto cliente-wen-flux está el ejemplo con Web Client. 
+En el proyecto cliente-web-flux está el ejemplo con Web Client. 
 
 En el proyecto cliente-tradicional está el ejemplo con Rest Template.
 
